@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 )
 
@@ -21,6 +22,12 @@ func init() {
 }
 
 func main() {
+	flag.VisitAll(func(f *flag.Flag) {
+		key := strings.ToUpper(f.Name)
+		if val, ok := os.LookupEnv(key); ok {
+			f.Value.Set(val)
+		}
+	})
 	flag.Parse()
 	srv := http.Server{
 		Addr: Listen,
