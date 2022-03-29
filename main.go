@@ -29,8 +29,11 @@ func main() {
 		}
 	})
 	flag.Parse()
+	SetupMonitor()
+	mux := http.NewServeMux()
 	srv := http.Server{
-		Addr: Listen,
+		Addr:    Listen,
+		Handler: mux,
 	}
 	go func() {
 		log.Print(srv.ListenAndServe())
