@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"log"
+	"net"
 	"net/http"
 	_ "net/http/pprof"
 
@@ -27,6 +29,11 @@ func SetupMonitor() {
 	}
 	go func() {
 		log.Printf("Start monitoring: %s", Monitor)
-		log.Print(srv.ListenAndServe())
+		err := srv.ListenAndServe()
+		var opErr *net.OpError
+		if errors.As(err, &opErr) {
+			log.Fatal(opErr)
+		}
+		log.Print(err)
 	}()
 }

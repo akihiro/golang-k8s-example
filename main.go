@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -36,7 +38,12 @@ func main() {
 		Handler: mux,
 	}
 	go func() {
-		log.Print(srv.ListenAndServe())
+		err := srv.ListenAndServe()
+		var opErr *net.OpError
+		if errors.As(err, &opErr) {
+			log.Fatal(opErr)
+		}
+		log.Print(err)
 	}()
 
 	sigCh := make(chan os.Signal, 1)
